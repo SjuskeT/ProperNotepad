@@ -74,7 +74,7 @@ void MainWindow::createMenus()
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 
     QAction *newAction = fileMenu->addAction(tr("&New"));
-    newAction->setShortcut(QKeySequence::New);
+    newAction->setShortcuts({QKeySequence::New, QKeySequence(Qt::CTRL | Qt::Key_T)});
     connect(newAction, &QAction::triggered, this, [this] { createNewTab(); });
 
     QAction *openAction = fileMenu->addAction(tr("&Open..."));
