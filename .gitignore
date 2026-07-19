@@ -1,0 +1,7 @@
+/build/
+/cmake-build-*/
+/.cache/
+/.qt/
+*.user
+*.autosave
+compile_commands.json
