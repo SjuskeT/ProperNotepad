@@ -6,6 +6,7 @@
 class QAction;
 class EditorTab;
 class QCloseEvent;
+class QShowEvent;
 class QTabWidget;
 class QTimer;
 
@@ -17,6 +18,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
     void createMenus();

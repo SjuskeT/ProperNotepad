@@ -18,6 +18,7 @@
 #include <QSet>
 #include <QSaveFile>
 #include <QSettings>
+#include <QShowEvent>
 #include <QStandardPaths>
 #include <QStatusBar>
 #include <QTabBar>
@@ -74,6 +75,18 @@ void MainWindow::openFiles(const QStringList &paths)
     for (const QString &path : paths) {
         openFileAtPath(path);
     }
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
+
+    QTimer::singleShot(0, this, [this] {
+        activateWindow();
+        if (EditorTab *editor = currentEditor()) {
+            editor->setFocus(Qt::OtherFocusReason);
+        }
+    });
 }
 
 void MainWindow::createMenus()
