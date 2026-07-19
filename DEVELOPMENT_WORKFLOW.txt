@@ -1,0 +1,153 @@
+PROPERNOTEPAD DEVELOPMENT WORKFLOW
+===================================
+
+This guide describes how to modify, build, test, install, and release
+ProperNotepad on Pop!_OS.
+
+
+QUICK WORKFLOW
+--------------
+
+After changing the source code:
+
+    cmake --build build
+    ./build/ProperNotepad
+    sudo cmake --install build
+
+The desktop launcher, icon, and "Open With" integration are already defined by
+the project. Running cmake --install copies the updated application and its
+supporting files into the correct system locations.
+
+
+1. CREATE A BRANCH FOR THE CHANGE
+---------------------------------
+
+Start from an updated main branch:
+
+    cd /home/casperthomsen/Repos/ProperNotepad
+    git switch main
+    git pull
+    git switch -c feature/name-of-change
+
+Example:
+
+    git switch -c feature/search
+
+
+2. MAKE THE CHANGES
+-------------------
+
+Open the repository in VS Code and edit the source normally. The initial CMake
+configuration command does not need to be repeated after every source change.
+
+
+3. COMPILE
+----------
+
+Build the changed source files:
+
+    cmake --build build
+
+CMake normally detects changes to CMakeLists.txt automatically too.
+
+If the result appears stale, force a clean rebuild:
+
+    cmake --build build --clean-first
+
+
+4. TEST THE DEVELOPMENT VERSION
+-------------------------------
+
+Close the installed ProperNotepad application first, then run:
+
+    ./build/ProperNotepad
+
+Important: The development and installed versions use the same recovery-session
+file. Do not run them simultaneously, because they could overwrite each other's
+session state.
+
+The recovery file is normally located at:
+
+    ~/.local/share/SjuskeT/ProperNotepad/session.json
+
+
+5. COMMIT THE CHANGE
+--------------------
+
+Review and commit the completed change:
+
+    git status
+    git diff
+    git add <files-you-changed>
+    git commit -m "Describe the change"
+    git push -u origin feature/name-of-change
+
+Then merge the branch into main, preferably through a pull request.
+
+
+6. INSTALL THE UPDATED APPLICATION
+----------------------------------
+
+For an ordinary code change:
+
+    sudo cmake --install build
+
+The executable is normally installed at:
+
+    /usr/local/bin/ProperNotepad
+
+The updated version can then be launched from the Pop!_OS application menu.
+
+If the desktop launcher or file associations changed, also run:
+
+    sudo update-desktop-database /usr/local/share/applications
+
+
+SEPARATE DEBUG AND RELEASE BUILDS
+---------------------------------
+
+For longer-term development, separate build directories prevent Debug and
+Release configurations from replacing each other.
+
+Configure, build, and run the development version:
+
+    cmake -S . -B build-debug -G Ninja -DCMAKE_BUILD_TYPE=Debug
+    cmake --build build-debug
+    ./build-debug/ProperNotepad
+
+Configure, build, and install the release version:
+
+    cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release
+    cmake --build build-release
+    sudo cmake --install build-release
+
+The configure command is only required when first creating a build directory or
+when changing its configuration. After that, cmake --build is normally enough.
+
+
+CREATING A NEW RELEASE
+----------------------
+
+When a collection of changes is ready for release, update the version in both:
+
+    CMakeLists.txt
+        project(ProperNotepad VERSION ...)
+
+    src/main.cpp
+        QApplication::setApplicationVersion(...)
+
+Build and test the release version, merge the work into main, and then create a
+Git tag. Example for version 0.2.0:
+
+    git switch main
+    git pull
+    git tag -a v0.2.0 -m "ProperNotepad 0.2.0"
+    git push origin v0.2.0
+
+
+DISTRIBUTING TO OTHER USERS
+---------------------------
+
+The CMake installation is sufficient for installing ProperNotepad on the local
+computer. Distribution to other Linux users can later be implemented using an
+AppImage, Flatpak, or Debian .deb package.
