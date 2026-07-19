@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     QApplication application(argc, argv);
     QApplication::setOrganizationName(QStringLiteral("SjuskeT"));
     QApplication::setApplicationName(QStringLiteral("ProperNotepad"));
-    QApplication::setApplicationVersion(QStringLiteral("0.1.0"));
+    QApplication::setApplicationVersion(QStringLiteral("0.2.0"));
     QApplication::setDesktopFileName(QStringLiteral("propernotepad.desktop"));
     QApplication::setWindowIcon(QIcon(QStringLiteral(":/propernotepad.png")));
 
