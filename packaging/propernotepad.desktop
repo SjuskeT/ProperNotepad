@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=ProperNotepad
+GenericName=Text Editor
+Comment=A dark tabbed text editor that restores unsaved notes
+Exec=ProperNotepad %F
+Icon=propernotepad
+Terminal=false
+Categories=Utility;TextEditor;
+MimeType=text/plain;
+StartupNotify=true

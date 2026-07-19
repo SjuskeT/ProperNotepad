@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QStringList>
 
 class QAction;
 class EditorTab;
@@ -12,6 +13,7 @@ class MainWindow final : public QMainWindow
 {
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    void openFiles(const QStringList &paths);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -44,6 +46,5 @@ private:
 
     QTabWidget *tabs_;
     QTimer *sessionSaveTimer_;
-    int nextUntitledNumber_ = 1;
     bool restoringSession_ = false;
 };

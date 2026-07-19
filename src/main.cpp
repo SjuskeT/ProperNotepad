@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QColor>
+#include <QIcon>
 #include <QPalette>
 #include <QStyleFactory>
 
@@ -68,10 +69,13 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName(QStringLiteral("SjuskeT"));
     QApplication::setApplicationName(QStringLiteral("ProperNotepad"));
     QApplication::setApplicationVersion(QStringLiteral("0.1.0"));
+    QApplication::setDesktopFileName(QStringLiteral("propernotepad.desktop"));
+    QApplication::setWindowIcon(QIcon(QStringLiteral(":/propernotepad.png")));
 
     applyDarkTheme(application);
 
     MainWindow window;
     window.show();
+    window.openFiles(application.arguments().mid(1));
     return application.exec();
 }

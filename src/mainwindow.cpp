@@ -15,7 +15,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
-#include <QRegularExpression>
+#include <QSet>
 #include <QSaveFile>
 #include <QSettings>
 #include <QStandardPaths>
@@ -67,6 +67,13 @@ MainWindow::MainWindow(QWidget *parent)
     QSettings settings;
     restoreGeometry(settings.value(QStringLiteral("window/geometry")).toByteArray());
     restoreSession();
+}
+
+void MainWindow::openFiles(const QStringList &paths)
+{
+    for (const QString &path : paths) {
+        openFileAtPath(path);
+    }
 }
 
 void MainWindow::createMenus()
@@ -315,7 +322,20 @@ EditorTab *MainWindow::currentEditor() const
 
 QString MainWindow::nextUntitledName()
 {
-    return tr("Untitled %1").arg(nextUntitledNumber_++);
+    QSet<QString> usedNames;
+    for (int index = 0; index < tabs_->count(); ++index) {
+        const auto *editor = qobject_cast<EditorTab *>(tabs_->widget(index));
+        if (editor && editor->filePath().isEmpty()) {
+            usedNames.insert(editor->untitledName());
+        }
+    }
+
+    for (int number = 1; ; ++number) {
+        const QString candidate = tr("Untitled %1").arg(number);
+        if (!usedNames.contains(candidate)) {
+            return candidate;
+        }
+    }
 }
 
 QString MainWindow::sessionFilePath() const
@@ -430,18 +450,12 @@ void MainWindow::restoreSession()
         return;
     }
 
-    const QRegularExpression untitledPattern(QStringLiteral("^Untitled (\\d+)$"));
     for (const QJsonValue &value : tabArray) {
         const QJsonObject tab = value.toObject();
         const QString filePath = tab.value(QStringLiteral("filePath")).toString();
         QString untitledName = tab.value(QStringLiteral("untitledName")).toString();
         if (filePath.isEmpty() && untitledName.isEmpty()) {
             untitledName = nextUntitledName();
-        }
-
-        const QRegularExpressionMatch match = untitledPattern.match(untitledName);
-        if (match.hasMatch()) {
-            nextUntitledNumber_ = qMax(nextUntitledNumber_, match.captured(1).toInt() + 1);
         }
 
         addEditor(tab.value(QStringLiteral("content")).toString(),

@@ -17,6 +17,13 @@ qt_add_executable(ProperNotepad
     src/editortab.h
 )
 
+qt_add_resources(ProperNotepad "app_resources"
+    PREFIX "/"
+    BASE "src"
+    FILES
+        src/propernotepad.png
+)
+
 target_link_libraries(ProperNotepad PRIVATE Qt6::Widgets)
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -25,3 +32,10 @@ endif()
 
 include(GNUInstallDirs)
 install(TARGETS ProperNotepad RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES src/propernotepad.png
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/pixmaps
+    RENAME propernotepad.png
+)
+install(FILES packaging/propernotepad.desktop
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+)
